@@ -16,12 +16,14 @@ from .utils.io import read_image
 from .utils.geo import BoundaryBox, Projection
 from .utils.exif import EXIF
 
-try:
-    from geopy.geocoders import Nominatim
+# try:
+from geopy.geocoders import Nominatim
 
-    geolocator = Nominatim(user_agent="orienternet")
-except ImportError:
-    geolocator = None
+geolocator = Nominatim(user_agent="orienternet")
+assert geolocator is not None
+# except ImportError as e:
+    # geolocator = None
+    # print("e", e)
 
 try:
     from gradio_client import Client

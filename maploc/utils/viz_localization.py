@@ -126,6 +126,10 @@ def add_circle_inset(
     ax.add_patch(copy.deepcopy(c))
     axins.add_patch(c)
 
+    # ax.add_patch(c)
+    # frozen_c = c.get_transform().frozen()
+    # axins.add_patch(frozen_c)
+
     radius_inset = radius_px + 1
     axins.set_xlim([center[0] - radius_inset, center[0] + radius_inset])
     ylim = center[1] - radius_inset, center[1] + radius_inset
