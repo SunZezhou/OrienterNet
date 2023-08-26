@@ -64,14 +64,19 @@ def download(data_dir: Path):
             if line:
                 seq = line.split()[0].split("/")[1][: -len("_sync")]
                 seqs.add(seq)
+    sort_seqs = list(seqs)
+    sort_seqs.sort()
     dates = {"_".join(s.split("_")[:3]) for s in seqs}
     logger.info("Downloading data for %d sequences in %d dates", len(seqs), len(dates))
 
-    for seq in tqdm(seqs):
+    print(sort_seqs)
+    # for seq in tqdm(sort_seqs):
+    for seq in sort_seqs:
         logger.info("Working on %s.", seq)
         date = "_".join(seq.split("_")[:3])
         url = f"https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data/{seq}/{seq}_sync.zip"
         seq_dir = data_dir / date / f"{seq}_sync"
+        print("seq_dir: " + str(seq_dir))
         if seq_dir.exists():
             continue
         zip_path = download_file(url, data_dir)
@@ -82,7 +87,7 @@ def download(data_dir: Path):
             shutil.rmtree(seq_dir / f"image_0{image_index}")
         shutil.rmtree(seq_dir / "velodyne_points")
         Path(zip_path).unlink()
-        break
+        # break
 
     for date in tqdm(dates):
         url = (
@@ -97,10 +102,10 @@ def download(data_dir: Path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--data_dir", type=Path, default=Path(KittiDataModule.default_cfg["local_dir"])
+        "--data_dir", type=Path, default=Path(KittiDataModule.default_cfg["data_dir"])
     )
     parser.add_argument("--pixel_per_meter", type=int, default=2)
-    parser.add_argument("--generate_tiles", action="store_true")
+    parser.add_argument("--generate_tiles", action="store_true", default=True)
     args = parser.parse_args()
 
     args.data_dir.mkdir(exist_ok=True, parents=True)

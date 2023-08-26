@@ -389,7 +389,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data_dir", type=Path, default=MapillaryDataModule.default_cfg["data_dir"]
     )
-    parser.add_argument("--generate_tiles", action="store_true")
+    parser.add_argument("--generate_tiles", action="store_true", default=True)
     args = parser.parse_args()
 
     args.data_dir.mkdir(exist_ok=True, parents=True)

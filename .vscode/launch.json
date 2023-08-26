@@ -1,0 +1,28 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "mapillary_prepare",
+            "type": "python",
+            "request": "launch",
+            // prepare MGL
+            // "module": "maploc.data.mapillary.prepare",
+            // "args": [
+            //     "--token", "MLY|6949235451787767|55b0775d7d3a9fbfb6b8c3b99fef4bb6"
+            // ]
+
+            // reproduce
+            "module": "maploc.train",
+            "args": [
+                "experiment.name=OrienterNet_MGL_reproduce", 
+                "experiment.gpus=1",
+                "data.loading.train.batch_size=4"
+
+            ]
+        }
+    ]
+}

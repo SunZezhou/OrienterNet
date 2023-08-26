@@ -14,7 +14,7 @@ class GeoPlotter:
     def __init__(self, zoom=12, **kwargs):
         self.fig = go.Figure()
         self.fig.update_layout(
-            mapbox_style="open-street-map",
+            mapbox_style="open-street-map", # open-street-map, carto-positron, carto-darkmatter, stamen-terrain, stamen-toner, stamen-watercolor
             autosize=True,
             mapbox_zoom=zoom,
             margin={"r": 0, "t": 0, "l": 0, "b": 0},
