@@ -132,7 +132,7 @@ location_to_params = {
 }
 
 
-cfg = OmegaConf.create(
+default_cfg = OmegaConf.create(
     {
         "max_image_size": 512,
         "do_legacy_pano_offset": True,
@@ -277,6 +277,7 @@ def process_location(
     data_dir: Path,
     split_path: Path,
     token: str,
+    cfg: DictConfig,
     generate_tiles: bool = False,
 ):
     params = location_to_params[location]
@@ -362,6 +363,7 @@ def process_location(
     else:
         logger.info("Downloading pre-generated map tiles.")
         download_file(DATA_URL + f"/tiles/{location}.pkl", tiles_path)
+        tile_manager = TileManager.load(tiles_path)
 
     # Visualize the data split
     plotter = GeoPlotter()
@@ -370,7 +372,9 @@ def process_location(
     plotter.points(views_latlon[~is_val], "red", view_ids[~is_val], "train")
     plotter.points(views_latlon[is_val], "green", view_ids[is_val], "val")
     plotter.bbox(bbox, "blue", "query bounding box")
-    plotter.bbox(projection.unproject(bbox_tiling), "black", "tiling bounding box")
+    plotter.bbox(
+        projection.unproject(tile_manager.bbox), "black", "tiling bounding box"
+    )
     geo_viz_path = loc_dir / f"split_{location}.html"
     plotter.fig.write_html(geo_viz_path)
     logger.info("Wrote split visualization to %s.", geo_viz_path)
@@ -390,10 +394,12 @@ if __name__ == "__main__":
         "--data_dir", type=Path, default=MapillaryDataModule.default_cfg["data_dir"]
     )
     parser.add_argument("--generate_tiles", action="store_true", default=True)
+    parser.add_argument("dotlist", nargs="*")
     args = parser.parse_args()
 
     args.data_dir.mkdir(exist_ok=True, parents=True)
     shutil.copy(Path(__file__).parent / args.split_filename, args.data_dir)
+    cfg_ = OmegaConf.merge(default_cfg, OmegaConf.from_cli(args.dotlist))
 
     for location in args.locations:
         logger.info("Starting processing for location %s.", location)
@@ -402,5 +408,6 @@ if __name__ == "__main__":
             args.data_dir,
             args.data_dir / args.split_filename,
             args.token,
+            cfg_,
             args.generate_tiles,
         )
